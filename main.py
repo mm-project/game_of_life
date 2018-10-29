@@ -17,14 +17,10 @@ class World:
         self.m = 5
         self.cells = [[0 for x in range(self.n)] for y in range(self.m)] 
         self.cells[0][0] = 1
+        self.cells[0][1] = 1
         self.cells[0][2] = 1
-        self.cells[1][1] = 1
-        self.cells[1][2] = 1     
-        #self.cells[4][4] = 1
-        #self.cells[4][5] = 1
-        #self.cells[2][2] = 1
-        self.alive_count = 4
-        #self.to_be_born = []
+        #self.cells[1][2] = 1     
+        self.alive_count = 3
 
     def has_life(self):
         if self.alive_count > 0:
@@ -60,14 +56,16 @@ class World:
                         count = count + self.cells[i+a][j+b]
         
         if count is not 0:
-            print ("->count: ",count)
-            #os.exit(1)
+            print ("->neibhoors count: ",count)
+        else:
+            print ("->count: no neibhoors")
             
         return count
         
     def update(self):
         self.alive_count = 0
         to_be_born = []
+        to_be_died = []
         for i in range(len(self.cells)):
             for j in range(len(self.cells[i])):
                 print("inspecting element cell[",i,"][",j,"] = ",self.cells[i][j])
@@ -76,14 +74,26 @@ class World:
                     
                 num = self.get_num_neihboors(i,j)
                 if ( self.cells[i][j] != 0 ) and ( num >= 4 or num <= 2 ):
-                    self.cells[i][j] = 0   
+                    print("->will be killed:")
+                    to_be_died.append([i,j])
                 if ( self.cells[i][j] == 0 ) and ( num is 3  ):
+                    print("->will be born:")
                     to_be_born.append([i,j])
+                
+                print()
         
+        print("Creating...")
         for a,b in to_be_born:
+            print("->cell[",a,"][",b,"]") 
             self.cells[a][b] = 1
-
+        
+        print("Erasing...")
+        for a,b in to_be_died:
+            print("->cell[",a,"][",b,"]") 
+            self.cells[a][b] = 0
+        
         self.iteration = self.iteration + 1
+        
     
     def get_cells(self):
         return self.cells
@@ -107,6 +117,7 @@ class Renderer:
 
 r = Renderer() 
 w = World()
-while w.has_life() is not 0: 
+w.update()
+#while w.has_life() is not 0: 
     #r.render(w)
-    w.update()
+    #w.update()
