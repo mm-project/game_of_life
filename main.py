@@ -1,5 +1,6 @@
 import sys
 import os
+import random
 #from colorama import Fore, Back, Style 
 #class BioCell:
 #    def __init__(self, posx, posy):
@@ -20,17 +21,15 @@ class bcolors:
 class World:
     def __init__(self):
         self.iteration = 0
-        #self.n = 204
-        #self.m = 51       
-        self.n = 200
-        self.m = 53
+        self.alive_count = 0
+        self.n = 204
+        self.m = 50       
         self.cells = [[0 for x in range(self.n)] for y in range(self.m)] 
-        self.cells[20][21] = 1
-        self.cells[21][22] = 1
-        self.cells[22][20] = 1
-        self.cells[22][21] = 1
-        self.cells[22][22] = 1
-        self.alive_count = 5
+        for x in range(800):
+            rx = random.randint(1,self.m-1)
+            ry = random.randint(1,self.n-1)
+            self.cells[rx][ry] = 1
+            self.alive_count = self.alive_count + 1
 
     def has_life(self):
         if self.alive_count > 0:
@@ -66,8 +65,10 @@ class World:
             elif j is self.n-1:
                 count = self.cells[i-1][j] + self.cells[i+1][j] + self.cells[i][j-1] + self.cells[i-1][j-1] + self.cells[i+1][j-1]
             else:        
-                count = self.cells[i-1][j-1] + self.cells[i-1][j] + self.cells[i-1][j+1] + self.cells[i][j+1]
-                count = count + self.cells[i+1][j+1] + self.cells[i+1][j] + self.cells[i-1][j-1] + self.cells[i][j-1] 
+                #print("here--")
+                count = self.cells[i-1][j-1] + self.cells[i-1][j] + self.cells[i-1][j+1] 
+                count = count + self.cells[i][j-1] + self.cells[i][j+1]
+                count = count + self.cells[i+1][j-1] + + self.cells[i+1][j] + self.cells[i+1][j+1]   
                 #FIXME
                 #print("here--")
                 #for a in range(-1,0,1):
@@ -91,26 +92,31 @@ class World:
                 #print("inspecting element cell[",i,"][",j,"] = ",self.cells[i][j])
                 if self.cells[i][j] is 1:
                     self.alive_count = self.alive_count + 1
-                    
                 num = self.get_num_neihboors(i,j)
-                if ( self.cells[i][j] != 0 ) and ( num >= 3 or num < 2 ):
+                if ( self.cells[i][j] != 0 ) and ( num >= 4 or num < 2 ):
                     #print("->will be killed:")
                     to_be_died.append([i,j])
-                if ( self.cells[i][j] == 0 ) and ( num is 2  ):
+                if ( self.cells[i][j] == 0 ) and ( num is 3  ):
                     #print("->will be born:")
-                    to_be_born.append([i,j])
-                
+                    to_be_born.append([i,j])              
                 #print()
+        
         
         #print("Creating...")
         for a,b in to_be_born:
-            #print("->cell[",a,"][",b,"]") 
+            #print("-->cell[",a,"][",b,"]") 
             self.cells[a][b] = 1
         
         #print("Erasing...")
         for a,b in to_be_died:
-            #print("->cell[",a,"][",b,"]") 
+            #print("-->cell[",a,"][",b,"]") 
             self.cells[a][b] = 0
+
+        #print("Remaining...")
+        #for i in range(len(self.cells)):
+            #for j in range(len(self.cells[i])):
+                #if self.cells[i][j] is 1:
+                    #print("-->cell[",i,"][",j,"]") 
         
         self.iteration = self.iteration + 1
         
@@ -141,6 +147,7 @@ class Renderer:
 
 r = Renderer() 
 w = World()
+#w.update()
 #w.update()
 while w.has_life() is not 0: 
     r.render(w)
