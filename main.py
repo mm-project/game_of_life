@@ -137,12 +137,12 @@ class Renderer:
             for j in range(len(cells[i])):
                 #os.system("clear")
                 if cells[i][j] is 1:
-                    print(bcolors.WARNING + "1" + bcolors.ENDC,end='', flush=True)
+                    print(bcolors.WARNING + "X" + bcolors.ENDC,end='', flush=True)
                 else:
-                    print(0, end='', flush=True)
+                    print(" ", end='', flush=True)
             print()
         print()
-        os.system("sleep 0.1")
+        os.system("sleep 2")
    
 
 r = Renderer() 
